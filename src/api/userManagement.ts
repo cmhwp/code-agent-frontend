@@ -2,6 +2,116 @@
 /* eslint-disable */
 import request from '@/utils/request'
 
+/** 封禁用户 封禁指定用户 POST /user/admin/ban */
+export async function banUser(
+  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
+  params: API.banUserParams,
+  options?: { [key: string]: any }
+) {
+  return request<API.BaseResponseBoolean>('/user/admin/ban', {
+    method: 'POST',
+    params: {
+      ...params,
+    },
+    ...(options || {}),
+  })
+}
+
+/** 批量操作用户 批量删除、封禁、解封用户 POST /user/admin/batch-operation */
+export async function batchOperateUsers(
+  body: API.BatchUserOperationRequest,
+  options?: { [key: string]: any }
+) {
+  return request<API.BaseResponseMapStringObject>('/user/admin/batch-operation', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    data: body,
+    ...(options || {}),
+  })
+}
+
+/** 管理员删除用户 管理员删除指定用户 POST /user/admin/delete */
+export async function deleteUserByAdmin(body: API.DeleteRequest, options?: { [key: string]: any }) {
+  return request<API.BaseResponseBoolean>('/user/admin/delete', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    data: body,
+    ...(options || {}),
+  })
+}
+
+/** 强制用户下线 强制指定用户下线 POST /user/admin/kickout */
+export async function kickoutUser(
+  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
+  params: API.kickoutUserParams,
+  options?: { [key: string]: any }
+) {
+  return request<API.BaseResponseBoolean>('/user/admin/kickout', {
+    method: 'POST',
+    params: {
+      ...params,
+    },
+    ...(options || {}),
+  })
+}
+
+/** 管理员用户列表 管理员分页获取用户列表 POST /user/admin/list/page/vo */
+export async function listUserVoByPageByAdmin(
+  body: API.UserQueryRequest,
+  options?: { [key: string]: any }
+) {
+  return request<API.BaseResponsePageUserVO>('/user/admin/list/page/vo', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    data: body,
+    ...(options || {}),
+  })
+}
+
+/** 用户统计 获取用户统计信息 GET /user/admin/stats */
+export async function getUserStats(options?: { [key: string]: any }) {
+  return request<API.BaseResponseMapStringObject>('/user/admin/stats', {
+    method: 'GET',
+    ...(options || {}),
+  })
+}
+
+/** 解封用户 解封指定用户 POST /user/admin/unban */
+export async function unbanUser(
+  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
+  params: API.unbanUserParams,
+  options?: { [key: string]: any }
+) {
+  return request<API.BaseResponseBoolean>('/user/admin/unban', {
+    method: 'POST',
+    params: {
+      ...params,
+    },
+    ...(options || {}),
+  })
+}
+
+/** 管理员更新用户 管理员更新用户信息 POST /user/admin/update */
+export async function updateUserByAdmin(
+  body: API.UserAdminUpdateRequest,
+  options?: { [key: string]: any }
+) {
+  return request<API.BaseResponseBoolean>('/user/admin/update', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    data: body,
+    ...(options || {}),
+  })
+}
+
 /** 绑定邮箱 绑定邮箱到当前用户 POST /user/bind-email */
 export async function bindEmail(body: API.BindEmailRequest, options?: { [key: string]: any }) {
   return request<API.BaseResponseBoolean>('/user/bind-email', {

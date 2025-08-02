@@ -49,8 +49,8 @@ declare namespace API {
     userId?: number
     /** 搜索关键词 */
     searchText?: string
-    offset?: number
     ascending?: boolean
+    offset?: number
   }
 
   type AppUpdateRequest = {
@@ -88,6 +88,10 @@ declare namespace API {
     /** 更新时间 */
     updateTime?: string
     user?: UserVO
+  }
+
+  type banUserParams = {
+    userId: number
   }
 
   type BaseResponseAppVO = {
@@ -153,6 +157,13 @@ declare namespace API {
     success?: boolean
   }
 
+  type BaseResponsePageUserVO = {
+    code?: number
+    data?: PageUserVO
+    message?: string
+    success?: boolean
+  }
+
   type BaseResponseString = {
     code?: number
     data?: string
@@ -172,6 +183,15 @@ declare namespace API {
     data?: UserVO
     message?: string
     success?: boolean
+  }
+
+  type BatchUserOperationRequest = {
+    /** 用户ID列表 */
+    userIds: number[]
+    /** 操作类型：delete-删除，ban-封禁，unban-解封，role-修改角色 */
+    operation: string
+    /** 操作参数（如角色类型） */
+    parameter?: string
   }
 
   type BindEmailRequest = {
@@ -247,6 +267,10 @@ declare namespace API {
     loginId: string
   }
 
+  type kickoutUserParams = {
+    userId: number
+  }
+
   type LoginUserVO = {
     /** 用户id */
     id?: number
@@ -293,6 +317,20 @@ declare namespace API {
     pages?: number
   }
 
+  type PageUserVO = {
+    records?: UserVO[]
+    total?: number
+    size?: number
+    current?: number
+    orders?: OrderItem[]
+    optimizeCountSql?: PageUserVO
+    searchCount?: PageUserVO
+    optimizeJoinOfCountSql?: boolean
+    maxLimit?: number
+    countId?: string
+    pages?: number
+  }
+
   type ResetPasswordRequest = {
     /** 邮箱地址 */
     email: string
@@ -312,6 +350,10 @@ declare namespace API {
   }
 
   type ServerSentEventString = true
+
+  type unbanUserParams = {
+    userId: number
+  }
 
   type UpdateUserRoleRequest = {
     /** 用户ID */
@@ -351,11 +393,53 @@ declare namespace API {
     isDelete?: number
   }
 
+  type UserAdminUpdateRequest = {
+    /** 用户ID */
+    id: number
+    /** 用户账号 */
+    userAccount?: string
+    /** 用户昵称 */
+    userName?: string
+    /** 用户头像URL */
+    userAvatar?: string
+    /** 用户简介 */
+    userProfile?: string
+    /** 用户邮箱 */
+    userEmail?: string
+    /** 用户角色：user-普通用户，admin-管理员，ban-被封号 */
+    userRole?: string
+    /** 用户状态：0-正常，1-禁用 */
+    userStatus?: number
+  }
+
   type UserLoginRequest = {
     /** 账号 */
     userAccount: string
     /** 密码 */
     userPassword: string
+  }
+
+  type UserQueryRequest = {
+    pageNum?: number
+    pageSize?: number
+    sortField?: string
+    sortOrder?: string
+    /** 用户ID */
+    id?: number
+    /** 用户账号 */
+    userAccount?: string
+    /** 用户昵称 */
+    userName?: string
+    /** 用户邮箱 */
+    userEmail?: string
+    /** 用户角色：user/admin/ban */
+    userRole?: string
+    /** 用户状态：0-正常，1-禁用 */
+    userStatus?: number
+    /** 搜索关键词（账号、昵称、邮箱） */
+    searchText?: string
+    ascending?: boolean
+    offset?: number
   }
 
   type UserRegisterRequest = {
