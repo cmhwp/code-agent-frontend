@@ -1,145 +1,62 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import {
-  Layout,
-  Menu,
-  Breadcrumb,
-  Dropdown,
-  Avatar,
-  Badge,
-  Button,
-  Drawer
-} from 'ant-design-vue'
-import {
-  MenuUnfoldOutlined,
-  MenuFoldOutlined,
-  DashboardOutlined,
-  UserOutlined,
-  SettingOutlined,
-  AppstoreOutlined,
-  CodeOutlined,
-  LogoutOutlined,
-  BellOutlined
-} from '@ant-design/icons-vue'
+import { message } from 'ant-design-vue'
+import { Layout, Badge, Button, Drawer, Space } from 'ant-design-vue'
+import { MenuUnfoldOutlined, MenuFoldOutlined, BellOutlined } from '@ant-design/icons-vue'
+import { useUserStore } from '@/stores/user'
+import { useLayoutStore } from '@/stores/layout'
+import AppLogo from '@/components/AppLogo.vue'
+import AppMenu from '@/components/AppMenu.vue'
+import UserDropdown from '@/components/UserDropdown.vue'
+import AppBreadcrumb from '@/components/AppBreadcrumb.vue'
+import ThemeSetting from '@/components/ThemeSetting.vue'
+import FullScreen from '@/components/FullScreen.vue'
 
 const { Header, Sider, Content } = Layout
 
 const router = useRouter()
 const route = useRoute()
+const userStore = useUserStore()
+const layoutStore = useLayoutStore()
 
 // 响应式状态
 const collapsed = ref(false)
 const mobileDrawerVisible = ref(false)
 const isMobile = ref(window.innerWidth < 768)
 
-// 监听窗口大小变化
-window.addEventListener('resize', () => {
+// 处理窗口大小变化
+const handleResize = () => {
   isMobile.value = window.innerWidth < 768
   if (!isMobile.value) {
     mobileDrawerVisible.value = false
   }
-})
-
-// 菜单数据
-const menuItems = ref([
-  {
-    key: '/admin/dashboard',
-    icon: DashboardOutlined,
-    label: '仪表盘',
-    title: '仪表盘'
-  },
-  {
-    key: '/admin/apps',
-    icon: AppstoreOutlined,
-    label: '应用管理',
-    title: '应用管理'
-  },
-  {
-    key: '/admin/code-generator',
-    icon: CodeOutlined,
-    label: '代码生成',
-    title: '代码生成'
-  },
-  {
-    key: '/admin/users',
-    icon: UserOutlined,
-    label: '用户管理',
-    title: '用户管理'
-  },
-  {
-    key: '/admin/settings',
-    icon: SettingOutlined,
-    label: '系统设置',
-    title: '系统设置'
-  }
-])
-
-// 当前选中的菜单
-const selectedKeys = computed(() => [route.path])
-
-// 面包屑数据
-const breadcrumbItems = computed(() => {
-  const pathSegments = route.path.split('/').filter(Boolean)
-  const items = [{ title: '首页', path: '/admin' }]
-
-  let currentPath = ''
-  pathSegments.forEach((segment, index) => {
-    currentPath += `/${segment}`
-    if (index > 0) { // 跳过 'admin'
-      const menuItem = menuItems.value.find(item => item.key === currentPath)
-      items.push({
-        title: menuItem?.title || segment,
-        path: currentPath
-      })
-    }
-  })
-
-  return items
-})
-
-// 用户下拉菜单
-const userMenuItems = [
-  {
-    key: 'profile',
-    label: '个人信息',
-    icon: UserOutlined
-  },
-  {
-    key: 'settings',
-    label: '账户设置',
-    icon: SettingOutlined
-  },
-  {
-    type: 'divider'
-  },
-  {
-    key: 'logout',
-    label: '退出登录',
-    icon: LogoutOutlined,
-    danger: true
-  }
-]
-
-// 处理菜单点击
-const handleMenuClick = ({ key }: { key: string | number }) => {
-  router.push(key as string)
 }
 
-// 处理用户菜单点击
-const handleUserMenuClick = ({ key }: { key: string | number }) => {
-  switch (key as string) {
-    case 'profile':
-      router.push('/admin/profile')
-      break
-    case 'settings':
-      router.push('/admin/account-settings')
-      break
-    case 'logout':
-      // 处理退出登录逻辑
-      console.log('退出登录')
-      router.push('/login')
-      break
+// 生命周期
+onMounted(() => {
+  window.addEventListener('resize', handleResize)
+  // 恢复布局设置
+  layoutStore.restoreSetting()
+  // 获取最新用户信息
+  userStore.fetchUser().catch(() => {
+    message.error('获取用户信息失败')
+  })
+})
+
+onUnmounted(() => {
+  window.removeEventListener('resize', handleResize)
+})
+
+// 处理菜单点击
+const handleMenuClick = ({ key }: { key: string }) => {
+  const targetPath = key
+  if (targetPath !== route.path) {
+    router.push(targetPath)
+    // 移动端关闭抽屉
+    if (isMobile.value) {
+      mobileDrawerVisible.value = false
+    }
   }
 }
 
@@ -151,43 +68,43 @@ const toggleSider = () => {
     collapsed.value = !collapsed.value
   }
 }
+
+// 侧边栏宽度
+const siderWidth = computed(() => (collapsed.value ? 80 : 250))
+
+// 主题相关计算属性
+const currentTheme = computed(() => layoutStore.layoutSetting.navTheme)
+const isDarkTheme = computed(() => layoutStore.isDarkTheme)
+
+// 为Ant Design Sider组件转换主题
+const siderTheme = computed(() => {
+  return currentTheme.value === 'light' ? 'light' : 'dark'
+})
 </script>
 
 <template>
-  <Layout class="min-h-screen">
+  <Layout class="admin-layout">
     <!-- 桌面端侧边栏 -->
     <Sider
       v-if="!isMobile"
       v-model:collapsed="collapsed"
       :trigger="null"
       collapsible
-      theme="dark"
-      class="shadow-lg"
-      :width="250"
+      :theme="siderTheme"
+      class="layout-sider"
+      :width="siderWidth"
+      :collapsed-width="80"
     >
       <!-- Logo 区域 -->
-      <div class="flex items-center justify-center h-16 bg-gray-900">
-        <div class="flex items-center space-x-2">
-          <div class="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
-            <CodeOutlined class="text-white text-lg" />
-          </div>
-          <span v-if="!collapsed" class="text-white font-bold text-lg">管理后台</span>
-        </div>
-      </div>
+      <AppLogo :collapsed="collapsed" :theme="currentTheme" />
 
       <!-- 菜单 -->
-      <Menu
-        theme="dark"
+      <AppMenu
+        :collapsed="collapsed"
+        :theme="currentTheme"
         mode="inline"
-        :selected-keys="selectedKeys"
-        @click="handleMenuClick"
-        class="border-r-0"
-      >
-        <Menu.Item v-for="item in menuItems" :key="item.key">
-          <component :is="item.icon" />
-          <span>{{ item.label }}</span>
-        </Menu.Item>
-      </Menu>
+        @menu-click="handleMenuClick"
+      />
     </Sider>
 
     <!-- 移动端抽屉菜单 -->
@@ -197,99 +114,68 @@ const toggleSider = () => {
       placement="left"
       :closable="false"
       :width="250"
-      :body-style="{ padding: 0 }"
+      :body-style="{ padding: 0, backgroundColor: '#001529' }"
+      class="mobile-drawer"
     >
       <!-- Logo 区域 -->
-      <div class="flex items-center justify-center h-16 bg-gray-900">
-        <div class="flex items-center space-x-2">
-          <div class="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
-            <CodeOutlined class="text-white text-lg" />
-          </div>
-          <span class="text-white font-bold text-lg">管理后台</span>
-        </div>
-      </div>
+      <AppLogo :collapsed="false" :theme="currentTheme" />
 
       <!-- 菜单 -->
-      <Menu
-        theme="dark"
+      <AppMenu
+        :collapsed="false"
+        :theme="currentTheme"
         mode="inline"
-        :selected-keys="selectedKeys"
-        @click="handleMenuClick"
-        class="border-r-0"
-      >
-        <Menu.Item v-for="item in menuItems" :key="item.key">
-          <component :is="item.icon" />
-          <span>{{ item.label }}</span>
-        </Menu.Item>
-      </Menu>
+        @menu-click="handleMenuClick"
+      />
     </Drawer>
 
-    <Layout>
+    <Layout class="layout-main">
       <!-- 顶部导航栏 -->
-      <Header class="bg-white shadow-sm border-b border-gray-200 px-4 flex items-center justify-between">
-        <div class="flex items-center space-x-4">
-          <!-- 折叠按钮 -->
-          <Button
-            type="text"
-            @click="toggleSider"
-            class="flex items-center justify-center w-10 h-10"
-          >
-            <MenuUnfoldOutlined v-if="collapsed || isMobile" />
-            <MenuFoldOutlined v-else />
-          </Button>
+      <Header class="layout-header">
+        <div class="header-left">
+          <Space :size="16">
+            <!-- 折叠按钮 -->
+            <Button
+              type="text"
+              @click="toggleSider"
+              class="trigger-btn"
+              :class="{ 'trigger-btn-mobile': isMobile }"
+            >
+              <MenuUnfoldOutlined v-if="collapsed || isMobile" />
+              <MenuFoldOutlined v-else />
+            </Button>
 
-          <!-- 面包屑 -->
-          <Breadcrumb class="hidden sm:block">
-            <Breadcrumb.Item v-for="(item, index) in breadcrumbItems" :key="item.path">
-              <router-link
-                v-if="index < breadcrumbItems.length - 1"
-                :to="item.path"
-                class="text-gray-600 hover:text-blue-500 transition-colors"
-              >
-                {{ item.title }}
-              </router-link>
-              <span v-else class="text-gray-800 font-medium">{{ item.title }}</span>
-            </Breadcrumb.Item>
-          </Breadcrumb>
+            <!-- 面包屑 -->
+            <AppBreadcrumb />
+          </Space>
         </div>
 
         <!-- 右侧工具栏 -->
-        <div class="flex items-center space-x-4">
-          <!-- 通知图标 -->
-          <Badge :count="3" size="small">
-            <Button type="text" shape="circle" class="flex items-center justify-center">
-              <BellOutlined class="text-lg" />
-            </Button>
-          </Badge>
+        <div class="header-right">
+          <Space :size="16">
+            <!-- 通知图标 -->
+            <Badge :count="3" size="small" class="header-badge">
+              <Button type="text" shape="circle" class="header-icon-btn">
+                <BellOutlined />
+              </Button>
+            </Badge>
 
-          <!-- 用户头像下拉菜单 -->
-          <Dropdown placement="bottomRight" :trigger="['click']">
-            <div class="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 rounded-lg px-3 py-2 transition-colors">
-              <Avatar size="small" :style="{ backgroundColor: '#1890ff' }">
-                <UserOutlined />
-              </Avatar>
-              <span class="hidden sm:inline text-gray-700 font-medium">管理员</span>
-            </div>
-            <template #overlay>
-              <Menu @click="handleUserMenuClick">
-                <Menu.Item
-                  v-for="item in userMenuItems"
-                  :key="item.key"
-                  :danger="item.danger"
-                >
-                  <component :is="item.icon" v-if="item.icon" />
-                  {{ item.label }}
-                </Menu.Item>
-              </Menu>
-            </template>
-          </Dropdown>
+            <!-- 全屏切换 -->
+            <FullScreen />
+
+            <!-- 主题设置 -->
+            <ThemeSetting />
+
+            <!-- 用户头像下拉菜单 -->
+            <UserDropdown />
+          </Space>
         </div>
       </Header>
 
       <!-- 主要内容区域 -->
-      <Content class="bg-gray-50 min-h-full">
-        <div class="p-6">
-          <slot />
+      <Content class="layout-content">
+        <div class="content-wrapper">
+          <router-view />
         </div>
       </Content>
     </Layout>
@@ -297,21 +183,129 @@ const toggleSider = () => {
 </template>
 
 <style scoped>
-/* 自定义样式 */
-:deep(.ant-layout-sider-collapsed) .ant-menu-item .anticon {
-  font-size: 16px;
-  margin-left: 8px;
+.admin-layout {
+  height: 100vh;
+  overflow: hidden;
 }
 
-:deep(.ant-layout-sider-collapsed) .ant-menu-item .ant-menu-title-content {
+/* 侧边栏样式 */
+.layout-sider {
+  border-right: none;
+  z-index: 100;
+}
+
+/* 头部样式 */
+.layout-header {
+  background: white;
+  border-bottom: 1px solid #f0f0f0;
+  box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
+  padding: 0 24px;
+  height: 64px;
+  line-height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 99;
+}
+
+.header-left {
+  flex: 1;
+  min-width: 0;
+}
+
+.header-right {
+  flex-shrink: 0;
+}
+
+.trigger-btn {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+}
+
+.trigger-btn:hover {
+  background-color: rgba(0, 0, 0, 0.04);
+}
+
+.trigger-btn-mobile {
+  background-color: #1890ff;
+  color: white;
+}
+
+.trigger-btn-mobile:hover {
+  background-color: #40a9ff;
+  color: white;
+}
+
+/* 头部右侧工具栏 */
+.header-badge :deep(.ant-badge-count) {
+  box-shadow: 0 0 0 1px white;
+}
+
+.header-icon-btn {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  font-size: 16px;
+  transition: all 0.3s ease;
+}
+
+.header-icon-btn:hover {
+  background-color: rgba(0, 0, 0, 0.04);
+}
+
+/* 内容区域 */
+.layout-content {
+  background: #f5f5f5;
+  overflow: auto;
+}
+
+.content-wrapper {
+  padding: 24px;
+  min-height: calc(100vh - 64px);
+}
+
+/* 移动端抽屉 */
+.mobile-drawer :deep(.ant-drawer-body) {
+  padding: 0;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .layout-header {
+    padding: 0 16px;
+  }
+
+  .content-wrapper {
+    padding: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .layout-header {
+    padding: 0 12px;
+  }
+
+  .content-wrapper {
+    padding: 12px;
+  }
+}
+
+/* 自定义 ant-design-vue 样式 */
+:deep(.ant-layout-sider-collapsed) .menu-label {
   display: none;
 }
 
-:deep(.ant-breadcrumb) .ant-breadcrumb-link {
-  color: #666;
-}
-
-:deep(.ant-breadcrumb) .ant-breadcrumb-separator {
-  color: #ccc;
+:deep(.ant-menu-inline-collapsed) .ant-menu-item {
+  padding-left: 24px !important;
 }
 </style>

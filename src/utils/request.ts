@@ -1,4 +1,9 @@
-import axios, { type AxiosInstance, type InternalAxiosRequestConfig, type AxiosResponse, type AxiosError } from 'axios'
+import axios, {
+  type AxiosInstance,
+  type InternalAxiosRequestConfig,
+  type AxiosResponse,
+  type AxiosError,
+} from 'axios'
 
 // 创建axios实例
 const request: AxiosInstance = axios.create({
@@ -22,7 +27,7 @@ request.interceptors.request.use(
   (error: AxiosError) => {
     console.error('Request error:', error)
     return Promise.reject(error)
-  }
+  },
 )
 
 // 响应拦截器
@@ -44,6 +49,7 @@ request.interceptors.response.use(
           localStorage.removeItem('token')
           localStorage.removeItem('userInfo')
           window.location.href = '/auth/login'
+          console.log('登录已过期，请重新登录')
           break
         case 403:
           console.error('403 Forbidden: 没有权限访问该资源')
@@ -66,7 +72,7 @@ request.interceptors.response.use(
     }
 
     return Promise.reject(error)
-  }
+  },
 )
 
 export default request

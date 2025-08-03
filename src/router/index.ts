@@ -15,27 +15,27 @@ const router = createRouter({
           path: 'login',
           name: 'Login',
           component: () => import('@/views/auth/LoginView.vue'),
-          meta: { title: '用户登录' }
+          meta: { title: '用户登录' },
         },
         {
           path: 'register',
           name: 'Register',
           component: () => import('@/views/auth/RegisterView.vue'),
-          meta: { title: '用户注册' }
+          meta: { title: '用户注册' },
         },
         {
           path: 'forgot-password',
           name: 'ForgotPassword',
           component: () => import('@/views/auth/ForgotPasswordView.vue'),
-          meta: { title: '忘记密码' }
+          meta: { title: '忘记密码' },
         },
         {
           path: 'reset-password',
           name: 'ResetPassword',
           component: () => import('@/views/auth/ResetPasswordView.vue'),
-          meta: { title: '重置密码' }
-        }
-      ]
+          meta: { title: '重置密码' },
+        },
+      ],
     },
 
     // 管理员路由
@@ -45,40 +45,40 @@ const router = createRouter({
       meta: {
         requiresAuth: true,
         requiredRole: 'admin',
-        title: '管理后台'
+        title: '管理后台',
       },
-      // children: [
-      //   {
-      //     path: 'dashboard',
-      //     name: 'AdminDashboard',
-      //     component: () => import('@/views/admin/Dashboard.vue'),
-      //     meta: { title: '仪表盘' }
-      //   },
-      //   {
-      //     path: 'users',
-      //     name: 'UserManagement',
-      //     component: () => import('@/views/admin/UserManagement.vue'),
-      //     meta: { title: '用户管理' }
-      //   },
-      //   {
-      //     path: 'apps',
-      //     name: 'AppManagement',
-      //     component: () => import('@/views/admin/AppManagement.vue'),
-      //     meta: { title: '应用管理' }
-      //   },
-      //   {
-      //     path: 'code-generator',
-      //     name: 'AdminCodeGenerator',
-      //     component: () => import('@/views/admin/CodeGenerator.vue'),
-      //     meta: { title: '代码生成' }
-      //   },
-      //   {
-      //     path: 'settings',
-      //     name: 'SystemSettings',
-      //     component: () => import('@/views/admin/Settings.vue'),
-      //     meta: { title: '系统设置' }
-      //   }
-      // ]
+      children: [
+        {
+          path: 'dashboard',
+          name: 'AdminDashboard',
+          component: () => import('@/views/admin/Dashboard.vue'),
+          meta: { title: '仪表盘' }
+        },
+        {
+          path: 'users',
+          name: 'UserManagement',
+          component: () => import('@/views/admin/UserManagement.vue'),
+          meta: { title: '用户管理' }
+        },
+        {
+          path: 'apps',
+          name: 'AppManagement',
+          component: () => import('@/views/admin/AppManagement.vue'),
+          meta: { title: '应用管理' }
+        },
+        {
+          path: 'code-generator',
+          name: 'AdminCodeGenerator',
+          component: () => import('@/views/admin/CodeGenerator.vue'),
+          meta: { title: '代码生成' }
+        },
+        {
+          path: 'settings',
+          name: 'SystemSettings',
+          component: () => import('@/views/admin/Settings.vue'),
+          meta: { title: '系统设置' }
+        }
+      ]
     },
 
     // 用户路由
@@ -87,7 +87,7 @@ const router = createRouter({
       component: UserLayout,
       meta: {
         requiresAuth: true,
-        title: '用户中心'
+        title: '用户中心',
       },
       // children: [
       //   {
@@ -132,19 +132,19 @@ const router = createRouter({
     // 默认重定向
     {
       path: '/',
-      redirect: '/user/dashboard'
+      redirect: '/user/dashboard',
     },
 
     // 登录重定向
     {
       path: '/login',
-      redirect: '/auth/login'
+      redirect: '/auth/login',
     },
 
     // 注册重定向
     {
       path: '/register',
-      redirect: '/auth/register'
+      redirect: '/auth/register',
     },
 
     // 404 页面
@@ -152,8 +152,8 @@ const router = createRouter({
       path: '/:pathMatch(.*)*',
       name: 'NotFound',
       component: () => import('@/views/NotFound.vue'),
-      meta: { title: '页面不存在' }
-    }
+      meta: { title: '页面不存在' },
+    },
   ],
 })
 
@@ -193,7 +193,7 @@ router.beforeEach(async (to, from, next) => {
   }
 
   // 检查角色权限
-  if (to.meta.requiredRole && !userStore.hasRole(to.meta.requiredRole)) {
+  if (to.meta.requiredRole && !userStore.hasRole(to.meta.requiredRole as string)) {
     message.error('您没有权限访问该页面')
 
     // 根据用户角色重定向到合适的页面

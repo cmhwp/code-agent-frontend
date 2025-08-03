@@ -49,8 +49,8 @@ declare namespace API {
     userId?: number
     /** 搜索关键词 */
     searchText?: string
-    ascending?: boolean
     offset?: number
+    ascending?: boolean
   }
 
   type AppUpdateRequest = {
@@ -438,8 +438,8 @@ declare namespace API {
     userStatus?: number
     /** 搜索关键词（账号、昵称、邮箱） */
     searchText?: string
-    ascending?: boolean
     offset?: number
+    ascending?: boolean
   }
 
   type UserRegisterRequest = {

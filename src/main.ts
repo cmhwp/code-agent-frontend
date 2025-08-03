@@ -6,11 +6,17 @@ import './style.css'
 
 import App from './App.vue'
 import router from './router'
+import { useLayoutStore } from './stores/layout'
 
 const app = createApp(App)
+const pinia = createPinia()
 
-app.use(createPinia())
+app.use(pinia)
 app.use(router)
 app.use(Antd)
+
+// 初始化布局设置
+const layoutStore = useLayoutStore()
+layoutStore.restoreSetting()
 
 app.mount('#app')

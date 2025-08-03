@@ -1,6 +1,5 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import type { API } from '@/api/typings'
 import { getLoginUser, userLogout } from '@/api/userManagement'
 
 export const useUserStore = defineStore('user', () => {
@@ -64,7 +63,7 @@ export const useUserStore = defineStore('user', () => {
   // 获取当前登录用户信息
   const fetchUser = async () => {
     try {
-      const response = await getLoginUser()
+      const response = (await getLoginUser()) as API.BaseResponseLoginUserVO
       if (response.success && response.data) {
         setUser(response.data)
         return response.data
@@ -127,6 +126,6 @@ export const useUserStore = defineStore('user', () => {
     fetchUser,
     logout,
     hasRole,
-    getDisplayName
+    getDisplayName,
   }
 })
