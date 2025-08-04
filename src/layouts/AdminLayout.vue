@@ -75,15 +75,22 @@ const siderWidth = computed(() => (collapsed.value ? 80 : 250))
 // 主题相关计算属性
 const currentTheme = computed(() => layoutStore.layoutSetting.navTheme)
 const isDarkTheme = computed(() => layoutStore.isDarkTheme)
+const isRealDarkTheme = computed(() => currentTheme.value === 'realDark')
 
 // 为Ant Design Sider组件转换主题
 const siderTheme = computed(() => {
   return currentTheme.value === 'light' ? 'light' : 'dark'
 })
+
+// 动态抽屉背景色
+const drawerBodyStyle = computed(() => ({
+  padding: 0,
+  backgroundColor: isRealDarkTheme.value ? '#141414' : '#001529',
+}))
 </script>
 
 <template>
-  <Layout class="admin-layout">
+  <Layout class="admin-layout" :class="`theme-${currentTheme.replace('realDark', 'real-dark')}`">
     <!-- 桌面端侧边栏 -->
     <Sider
       v-if="!isMobile"
@@ -114,7 +121,7 @@ const siderTheme = computed(() => {
       placement="left"
       :closable="false"
       :width="250"
-      :body-style="{ padding: 0, backgroundColor: '#001529' }"
+      :body-style="drawerBodyStyle"
       class="mobile-drawer"
     >
       <!-- Logo 区域 -->
@@ -186,6 +193,109 @@ const siderTheme = computed(() => {
 .admin-layout {
   height: 100vh;
   overflow: hidden;
+}
+
+/* 主题适配 - 参考layout配色方案 */
+.admin-layout.theme-light {
+  background-color: #f5f5f5;
+}
+
+.admin-layout.theme-light .layout-content {
+  background: #f5f5f5 !important;
+}
+
+.admin-layout.theme-light .content-wrapper {
+  background: #ffffff;
+  margin: 24px;
+  border-radius: 8px;
+  min-height: calc(100vh - 112px);
+  box-shadow:
+    0 1px 2px 0 rgba(0, 0, 0, 0.03),
+    0 1px 6px -1px rgba(0, 0, 0, 0.02),
+    0 2px 4px 0 rgba(0, 0, 0, 0.02);
+}
+
+.admin-layout.theme-dark {
+  background-color: #f5f5f5;
+}
+
+.admin-layout.theme-dark .layout-content {
+  background: #f5f5f5 !important;
+}
+
+.admin-layout.theme-dark .content-wrapper {
+  background: #ffffff;
+  margin: 24px;
+  border-radius: 8px;
+  min-height: calc(100vh - 112px);
+  box-shadow:
+    0 1px 2px 0 rgba(0, 0, 0, 0.03),
+    0 1px 6px -1px rgba(0, 0, 0, 0.02),
+    0 2px 4px 0 rgba(0, 0, 0, 0.02);
+}
+
+.admin-layout.theme-real-dark {
+  background-color: var(--app-background-color, #000000);
+}
+
+.admin-layout.theme-real-dark .layout-header {
+  background: var(--app-surface-color, #141414) !important;
+  border-bottom-color: var(--app-border-color, #424242) !important;
+  color: var(--app-text-color, rgba(255, 255, 255, 0.85)) !important;
+}
+
+.admin-layout.theme-real-dark .layout-content {
+  background: var(--app-background-color, #000000) !important;
+}
+
+.admin-layout.theme-real-dark .content-wrapper {
+  background: var(--app-card-color, #1f1f1f);
+  margin: 24px;
+  border-radius: 8px;
+  min-height: calc(100vh - 112px);
+  box-shadow:
+    0 1px 2px 0 rgba(255, 255, 255, 0.03),
+    0 1px 6px -1px rgba(255, 255, 255, 0.02),
+    0 2px 4px 0 rgba(255, 255, 255, 0.02);
+}
+
+.admin-layout.theme-real-dark .trigger-btn {
+  color: var(--app-text-color, rgba(255, 255, 255, 0.85));
+}
+
+.admin-layout.theme-real-dark .trigger-btn:hover {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+  color: var(--ant-primary-color) !important;
+}
+
+.admin-layout.theme-real-dark .header-icon-btn {
+  color: var(--app-text-color, rgba(255, 255, 255, 0.85));
+}
+
+.admin-layout.theme-real-dark .header-icon-btn:hover {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+  color: var(--ant-primary-color) !important;
+}
+
+/* 暗黑主题下的用户信息样式 */
+.admin-layout.theme-real-dark .user-info {
+  color: var(--app-text-color, rgba(255, 255, 255, 0.85));
+}
+
+.admin-layout.theme-real-dark .user-info:hover {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+.admin-layout.theme-real-dark .user-name {
+  color: var(--app-text-color, rgba(255, 255, 255, 0.85)) !important;
+}
+
+.admin-layout.theme-real-dark .breadcrumb-link {
+  color: var(--app-text-color-secondary, rgba(255, 255, 255, 0.65)) !important;
+}
+
+.admin-layout.theme-real-dark .breadcrumb-current {
+  color: var(--app-text-color, rgba(255, 255, 255, 0.85)) !important;
 }
 
 /* 侧边栏样式 */
@@ -285,7 +395,8 @@ const siderTheme = computed(() => {
     padding: 0 16px;
   }
 
-  .content-wrapper {
+  .admin-layout .content-wrapper {
+    margin: 12px;
     padding: 16px;
   }
 }
@@ -295,7 +406,8 @@ const siderTheme = computed(() => {
     padding: 0 12px;
   }
 
-  .content-wrapper {
+  .admin-layout .content-wrapper {
+    margin: 8px;
     padding: 12px;
   }
 }

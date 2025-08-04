@@ -16,19 +16,17 @@ const themeStyles = [
   { label: '暗黑主题', value: 'realDark' as ThemeType },
 ]
 
-// 预设主题色
+// 预设主题色 - 参考layout配色方案
 const themeColors = [
-  { title: '拂晓蓝', value: '#1890ff' },
-  { title: '薄暮', value: '#722ed1' },
-  { title: '火山', value: '#fa541c' },
-  { title: '日暮', value: '#faad14' },
-  { title: '明青', value: '#13c2c2' },
-  { title: '极光绿', value: '#52c41a' },
-  { title: '极客蓝', value: '#2f54eb' },
-  { title: '酱紫', value: '#eb2f96' },
+  { title: '拂晓蓝（默认）', value: '#1677FF' },
+  { title: '薄暮', value: '#F5222D' },
+  { title: '火山', value: '#FA541C' },
+  { title: '日暮', value: '#FAAD14' },
+  { title: '明青', value: '#13C2C2' },
+  { title: '极光绿', value: '#52C41A' },
+  { title: '极客蓝', value: '#2F54EB' },
+  { title: '酱紫', value: '#722ED1' },
 ]
-
-
 
 // 计算属性
 const colorPickerStyle = computed((): any => ({
@@ -50,8 +48,6 @@ const showDrawer = () => {
 const setNavTheme = (theme: ThemeType) => {
   layoutStore.updateLayoutSetting({ navTheme: theme })
 }
-
-
 
 const setThemeColor = (color: string) => {
   layoutStore.updateLayoutSetting({ colorPrimary: color })
@@ -84,14 +80,15 @@ const resetSettings = () => {
             class="theme-preview"
             :class="{
               'theme-preview-light': theme.value === 'light',
-              'theme-preview-dark': theme.value === 'dark' || theme.value === 'realDark',
+              'theme-preview-dark': theme.value === 'dark',
+              'theme-preview-real-dark': theme.value === 'realDark',
               active: layoutStore.layoutSetting.navTheme === theme.value,
             }"
           >
-            <div class="theme-preview-sider"></div>
-            <div class="theme-preview-content">
-              <div class="theme-preview-header"></div>
-              <div class="theme-preview-body"></div>
+            <div class="theme-preview-sider" :class="`sider-${theme.value}`"></div>
+            <div class="theme-preview-content" :class="`content-${theme.value}`">
+              <div class="theme-preview-header" :class="`header-${theme.value}`"></div>
+              <div class="theme-preview-body" :class="`body-${theme.value}`"></div>
             </div>
           </div>
         </div>
@@ -123,8 +120,6 @@ const resetSettings = () => {
         </Tooltip>
       </Descriptions.Item>
     </Descriptions>
-
-
 
     <!-- 重置按钮 -->
     <div class="setting-actions">
@@ -193,21 +188,76 @@ const resetSettings = () => {
   font-weight: bold;
 }
 
+/* 亮色主题预览 */
 .theme-preview-light {
+  background-color: #f5f5f5;
+}
+
+.theme-preview-light .sider-light {
+  background-color: #fff;
+  border-right: 1px solid #f0f0f0;
+}
+
+.theme-preview-light .content-light {
+  background-color: #f5f5f5;
+}
+
+.theme-preview-light .header-light {
+  background-color: #fff;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.theme-preview-light .body-light {
   background-color: #fff;
 }
 
+/* 暗色主题预览 */
 .theme-preview-dark {
+  background-color: #f5f5f5;
+}
+
+.theme-preview-dark .sider-dark {
   background-color: #001529;
 }
 
+.theme-preview-dark .content-dark {
+  background-color: #f5f5f5;
+}
+
+.theme-preview-dark .header-dark {
+  background-color: #fff;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.theme-preview-dark .body-dark {
+  background-color: #fff;
+}
+
+/* 暗黑主题预览 */
+.theme-preview-real-dark {
+  background-color: #000;
+}
+
+.theme-preview-real-dark .sider-realDark {
+  background-color: #141414;
+}
+
+.theme-preview-real-dark .content-realDark {
+  background-color: #000;
+}
+
+.theme-preview-real-dark .header-realDark {
+  background-color: #141414;
+  border-bottom: 1px solid #303030;
+}
+
+.theme-preview-real-dark .body-realDark {
+  background-color: #1f1f1f;
+}
+
+/* 通用样式 */
 .theme-preview-sider {
   width: 16px;
-  background-color: rgba(255, 255, 255, 0.1);
-}
-
-.theme-preview-light .theme-preview-sider {
-  background-color: #001529;
 }
 
 .theme-preview-content {
@@ -217,26 +267,14 @@ const resetSettings = () => {
 
 .theme-preview-header {
   height: 8px;
-  background-color: rgba(255, 255, 255, 0.15);
   margin-bottom: 4px;
   border-radius: 2px;
 }
 
-.theme-preview-light .theme-preview-header {
-  background-color: #f0f0f0;
-}
-
 .theme-preview-body {
   height: 20px;
-  background-color: rgba(255, 255, 255, 0.05);
   border-radius: 2px;
 }
-
-.theme-preview-light .theme-preview-body {
-  background-color: #fafafa;
-}
-
-
 
 .color-tag {
   width: 32px;
@@ -261,8 +299,6 @@ const resetSettings = () => {
   position: relative;
   overflow: hidden;
 }
-
-
 
 .setting-actions {
   margin-top: 24px;

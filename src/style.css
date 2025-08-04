@@ -1,9 +1,56 @@
 /* 全局样式 */
 :root {
-  --app-primary-color: #1890ff;
-  --ant-primary-color: #1890ff;
-  --ant-primary-color-hover: #40a9ff;
-  --ant-primary-color-active: #096dd9;
+  --app-primary-color: #1677ff;
+  --ant-primary-color: #1677ff;
+  --ant-primary-color-hover: #4096ff;
+  --ant-primary-color-active: #0958d9;
+}
+
+/* 暗黑主题变量 - 参考layout配色方案 */
+[data-theme='realDark'] {
+  --app-background-color: #000000;
+  --app-surface-color: #141414;
+  --app-card-color: #1f1f1f;
+  --app-border-color: #424242;
+  --app-text-color: rgba(255, 255, 255, 0.85);
+  --app-text-color-secondary: rgba(255, 255, 255, 0.65);
+  --app-text-color-disabled: rgba(255, 255, 255, 0.25);
+
+  /* Ant Design 暗黑主题变量覆盖 */
+  --ant-color-bg-base: #000000;
+  --ant-color-bg-container: #141414;
+  --ant-color-bg-elevated: #1f1f1f;
+  --ant-color-bg-layout: #000000;
+  --ant-color-bg-spotlight: #424242;
+  --ant-color-border: #424242;
+  --ant-color-border-secondary: #303030;
+  --ant-color-text: rgba(255, 255, 255, 0.85);
+  --ant-color-text-secondary: rgba(255, 255, 255, 0.65);
+  --ant-color-text-tertiary: rgba(255, 255, 255, 0.45);
+  --ant-color-text-quaternary: rgba(255, 255, 255, 0.25);
+}
+
+/* 亮色主题变量 */
+[data-theme='light'] {
+  --app-background-color: #f5f5f5;
+  --app-surface-color: #ffffff;
+  --app-card-color: #ffffff;
+  --app-border-color: #d9d9d9;
+  --app-text-color: rgba(0, 0, 0, 0.85);
+  --app-text-color-secondary: rgba(0, 0, 0, 0.65);
+}
+
+/* 暗色主题变量 */
+[data-theme='dark'] {
+  --app-background-color: #f5f5f5;
+  --app-surface-color: #ffffff;
+  --app-card-color: #ffffff;
+  --app-border-color: #d9d9d9;
+  --app-text-color: rgba(0, 0, 0, 0.85);
+  --app-text-color-secondary: rgba(0, 0, 0, 0.65);
+  --app-sider-color: #001529;
+  --app-header-color: #ffffff;
+  --app-content-color: #f5f5f5;
 }
 
 /* 重置样式 */
@@ -74,7 +121,7 @@ body {
 .ant-input:focus,
 .ant-input-focused {
   border-color: var(--ant-primary-color);
-  box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
+  box-shadow: 0 0 0 2px rgba(22, 119, 255, 0.2);
 }
 
 .ant-select:not(.ant-select-disabled):hover .ant-select-selector {
@@ -83,7 +130,7 @@ body {
 
 .ant-select-focused .ant-select-selector {
   border-color: var(--ant-primary-color);
-  box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
+  box-shadow: 0 0 0 2px rgba(22, 119, 255, 0.2);
 }
 
 .ant-tabs-tab-active .ant-tabs-tab-btn {
@@ -105,6 +152,60 @@ body {
 
 .ant-progress-bg {
   background-color: var(--ant-primary-color);
+}
+
+/* 暗黑主题下的 Ant Design 组件样式 */
+[data-theme='realDark'] .ant-layout {
+  background: var(--ant-color-bg-base);
+}
+
+[data-theme='realDark'] .ant-layout-header {
+  background: var(--ant-color-bg-container);
+  border-bottom: 1px solid var(--ant-color-border);
+}
+
+[data-theme='realDark'] .ant-layout-content {
+  background: var(--ant-color-bg-layout);
+}
+
+[data-theme='realDark'] .ant-layout-sider {
+  background: var(--ant-color-bg-container);
+}
+
+[data-theme='realDark'] .ant-menu-dark {
+  background: var(--ant-color-bg-container);
+}
+
+[data-theme='realDark'] .ant-drawer-content {
+  background: var(--ant-color-bg-container);
+}
+
+[data-theme='realDark'] .ant-card {
+  background: var(--ant-color-bg-container);
+  border-color: var(--ant-color-border);
+}
+
+[data-theme='realDark'] .ant-table {
+  background: var(--ant-color-bg-container);
+}
+
+[data-theme='realDark'] .ant-input,
+[data-theme='realDark'] .ant-select-selector {
+  background: var(--ant-color-bg-container);
+  border-color: var(--ant-color-border);
+  color: var(--ant-color-text);
+}
+
+[data-theme='realDark'] .ant-btn-default {
+  background: var(--ant-color-bg-container);
+  border-color: var(--ant-color-border);
+  color: var(--ant-color-text);
+}
+
+[data-theme='realDark'] .ant-btn-default:hover {
+  background: var(--ant-color-bg-elevated);
+  border-color: var(--ant-primary-color);
+  color: var(--ant-primary-color);
 }
 
 /* 滚动条样式 */

@@ -10,7 +10,7 @@ export interface LayoutSetting {
 
 const defaultSetting: LayoutSetting = {
   navTheme: 'dark',
-  colorPrimary: '#1890ff',
+  colorPrimary: '#1677FF',
 }
 
 export const useLayoutStore = defineStore('layout', () => {
@@ -32,6 +32,11 @@ export const useLayoutStore = defineStore('layout', () => {
     if (setting.colorPrimary) {
       updateThemeColor(setting.colorPrimary)
     }
+
+    // 更新主题模式
+    if (setting.navTheme) {
+      updateThemeMode(setting.navTheme)
+    }
   }
 
   // 更新主题色
@@ -43,7 +48,18 @@ export const useLayoutStore = defineStore('layout', () => {
     document.documentElement.style.setProperty('--ant-primary-color-active', darkenColor(color, 10))
   }
 
-  // 颜色处理函数
+  // 更新主题模式
+  const updateThemeMode = (theme: ThemeType) => {
+    // 移除所有主题类
+    document.documentElement.removeAttribute('data-theme')
+
+    // 根据主题设置对应的 data-theme 属性
+    if (theme === 'realDark') {
+      document.documentElement.setAttribute('data-theme', 'realDark')
+    }
+  }
+
+  // 颜色处理函数 - 基于#1677FF优化
   const lightenColor = (color: string, percent: number): string => {
     const num = parseInt(color.replace('#', ''), 16)
     const amt = Math.round(2.55 * percent)
@@ -103,12 +119,14 @@ export const useLayoutStore = defineStore('layout', () => {
         const parsedSetting = JSON.parse(saved)
         layoutSetting.value = { ...defaultSetting, ...parsedSetting }
         updateThemeColor(layoutSetting.value.colorPrimary)
+        updateThemeMode(layoutSetting.value.navTheme)
       } catch (error) {
         console.error('Failed to parse layout setting:', error)
         resetSetting()
       }
     } else {
       updateThemeColor(defaultSetting.colorPrimary)
+      updateThemeMode(defaultSetting.navTheme)
     }
   }
 
@@ -122,6 +140,7 @@ export const useLayoutStore = defineStore('layout', () => {
     // 方法
     updateLayoutSetting,
     updateThemeColor,
+    updateThemeMode,
     toggleTheme,
     resetSetting,
     restoreSetting,
